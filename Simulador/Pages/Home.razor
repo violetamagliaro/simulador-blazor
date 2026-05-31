@@ -1,0 +1,811 @@
+﻿@page "/"
+@using TarjetaSube.Models.Sube
+
+<div class="sube-wrap">
+
+    @* ── COLUMNA IZQUIERDA: Tarjetas visuales ── *@
+    <div class="sube-cards-col">
+
+        <div class="sube-card-visual card-normal @(tipo == "normal" ? "card-active" : "")"
+             @onclick='() => SetTipo("normal")'>
+            <div class="card-wave"></div>
+            <div class="card-wave2"></div>
+            <div class="card-saldo-pos">
+                @if (tipo == "normal")
+                {
+                    <div class="card-saldo-num">$@tarjeta.ObtenerSaldo().ToString("N0")</div>
+                    <div class="card-saldo-lbl">SALDO</div>
+                }
+            </div>
+            <div class="card-chip"></div>
+            <div class="card-num">4521 •••• •••• 1137</div>
+            <div class="card-label">Normal</div>
+            <div class="card-sub">Tarifa completa</div>
+            @if (tipo == "normal")
+            {
+                <div class="card-activa-badge">activa</div>
+            }
+        </div>
+
+        <div class="sube-card-visual card-medio @(tipo == "medio" ? "card-active" : "")"
+             @onclick='() => SetTipo("medio")'>
+            <div class="card-wave"></div>
+            <div class="card-wave2"></div>
+            <div class="card-saldo-pos">
+                @if (tipo == "medio")
+                {
+                    <div class="card-saldo-num">$@tarjeta.ObtenerSaldo().ToString("N0")</div>
+                    <div class="card-saldo-lbl">SALDO</div>
+                }
+            </div>
+            <div class="card-chip"></div>
+            <div class="card-num">8834 •••• •••• 2209</div>
+            <div class="card-label">Medio boleto</div>
+            <div class="card-sub">Estudiantes</div>
+            @if (tipo == "medio")
+            {
+                <div class="card-activa-badge">activa</div>
+            }
+        </div>
+
+        <div class="sube-card-visual card-franquicia @(tipo == "franquicia" ? "card-active" : "")"
+             @onclick='() => SetTipo("franquicia")'>
+            <div class="card-wave"></div>
+            <div class="card-wave2"></div>
+            <div class="card-saldo-pos">
+                @if (tipo == "franquicia")
+                {
+                    <div class="card-saldo-num">$@tarjeta.ObtenerSaldo().ToString("N0")</div>
+                    <div class="card-saldo-lbl">SALDO</div>
+                }
+            </div>
+            <div class="card-chip"></div>
+            <div class="card-num">6671 •••• •••• 5544</div>
+            <div class="card-label">Franquicia completa</div>
+            <div class="card-sub">Jubilados</div>
+            @if (tipo == "franquicia")
+            {
+                <div class="card-activa-badge">activa</div>
+            }
+        </div>
+
+    </div>
+
+    @* ── COLUMNA DERECHA: Panel principal ── *@
+    <div class="sube-main-col">
+
+        @* Stats *@
+        <div class="sube-stats-row">
+            <div class="sube-stat">
+                <div class="sube-stat-num @(tarjeta.ObtenerSaldo() < 0 ? "saldo-neg" : "")">
+                    $@tarjeta.ObtenerSaldo().ToString("N2")
+                </div>
+                <div class="sube-stat-lbl">saldo disponible</div>
+            </div>
+            <div class="sube-stat">
+                <div class="sube-stat-num">@tarjeta.ObtenerViajesEsteMes()</div>
+                <div class="sube-stat-lbl">viajes este mes</div>
+            </div>
+            <div class="sube-stat">
+                <div class="sube-stat-num">$@ObtenerTarifaActual().ToString("N0")</div>
+                <div class="sube-stat-lbl">tarifa actual</div>
+            </div>
+            <div class="sube-stat">
+                <div class="sube-stat-num">@ObtenerBeneficio()</div>
+                <div class="sube-stat-lbl">@ObtenerLabelBeneficio()</div>
+            </div>
+        </div>
+
+        @* Grid de dos columnas: acciones | boleto + historial *@
+        <div class="sube-content-grid">
+
+            @* Columna acciones *@
+            <div class="sube-actions-col">
+
+                @* Panel viajar *@
+                <div class="sube-panel">
+                    <div class="sube-panel-label">Tomar colectivo</div>
+                    <div class="sube-chip-row">
+                        @foreach (var l in lineas)
+                        {
+                            <div class="sube-chip @(lineaSeleccionada == l ? "chip-linea-sel" : "")"
+                                 @onclick="() => lineaSeleccionada = l">
+                                @l
+                            </div>
+                        }
+                    </div>
+                    <div class="sube-toggle-row">
+                        <span>🛣️ Viaje interurbano</span>
+                        <input type="checkbox" @bind="esInterurbano" />
+                    </div>
+                    @if (esInterurbano)
+                    {
+                        <div class="sube-msg-warn" style="margin-bottom:8px">Tarifa interurbana: $2.500</div>
+                    }
+                    <div class="sube-btn-primary" @onclick="Viajar">🚌 Subir al colectivo</div>
+                    @if (mensajeError != "")
+                    {
+                        <div class="sube-msg-warn">⚠️ @mensajeError</div>
+                    }
+                </div>
+
+                @* Panel recarga *@
+                <div class="sube-panel">
+                    <div class="sube-panel-label">Recargar saldo</div>
+                    <div class="sube-chip-row">
+                        @foreach (var m in montos)
+                        {
+                            <div class="sube-chip @(montoSeleccionado == m ? "chip-monto-sel" : "")"
+                                 @onclick="() => montoSeleccionado = m">
+                                $@m.ToString("N0")
+                            </div>
+                        }
+                    </div>
+                    <div style="display:flex; gap:6px; margin-top:8px">
+                        <div class="sube-btn-recargar" @onclick="Recargar">+ Recargar</div>
+                        <div class="sube-btn-reset" @onclick="Reset">↺</div>
+                    </div>
+                    @if (mensajeRecarga != "")
+                    {
+                        <div class="sube-msg-ok">✅ @mensajeRecarga</div>
+                    }
+                </div>
+
+            </div>
+
+            @* Columna boleto + historial *@
+            <div class="sube-info-col">
+
+                @* Último boleto *@
+                @if (ultimoBoleto != null)
+                {
+                    <div class="sube-panel">
+                        <div class="sube-panel-label">Último boleto</div>
+                        <div class="sube-boleto">
+                            <div class="sube-boleto-header">
+                                <span class="sube-boleto-linea">Línea @ultimoBoleto.LineaColectivo</span>
+                                @if (ultimoBoleto.TotalAbonado == 0)
+                                {
+                                    <span class="sube-badge sube-badge-amber">Gratuito</span>
+                                }
+                                else
+                                {
+                                    <span class="sube-badge sube-badge-green">Normal</span>
+                                }
+                            </div>
+                            <div class="sube-brow"><span>Fecha</span><span>@ultimoBoleto.Fecha.ToString("dd/MM/yyyy HH:mm")</span></div>
+                            <div class="sube-brow"><span>Tipo de tarjeta</span><span>@ultimoBoleto.TipoTarjeta</span></div>
+                            <div class="sube-brow"><span>Total abonado</span><span>$@ultimoBoleto.TotalAbonado.ToString("N2")</span></div>
+                            <div class="sube-brow">
+                                <span>Saldo restante</span>
+                                <span class="@(ultimoBoleto.SaldoRestante < 0 ? "saldo-neg" : "")">
+                                    $@ultimoBoleto.SaldoRestante.ToString("N2")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @* Historial *@
+                <div class="sube-panel sube-panel-hist">
+                    <div class="sube-panel-label">Historial</div>
+                    @if (historial.Count == 0)
+                    {
+                        <p class="sube-hist-empty">Sin movimientos aún</p>
+                    }
+                    else
+                    {
+                        <div class="sube-hist-scroll">
+                            @foreach (var h in historial)
+                            {
+                                <div class="sube-hist-item">
+                                    <div class="sube-hist-left">
+                                        <div class="sube-hist-dot @(h.EsRecarga ? "dot-recarga" : h.EsGratis ? "dot-gratis" : "dot-viaje")"></div>
+                                        <div>
+                                            <div class="sube-hist-desc">@h.Descripcion</div>
+                                            <div class="sube-hist-sub">@h.Sub · @h.Fecha</div>
+                                        </div>
+                                    </div>
+                                    <div class="@(h.Monto > 0 ? "hist-pos" : h.Monto < 0 ? "hist-neg" : "")">
+                                        @(h.Monto == 0 ? "Gratis" : (h.Monto > 0 ? "+" : "") + "$" + Math.Abs(h.Monto).ToString("N2"))
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private string tipo = "normal";
+    private Tarjeta tarjeta = new Tarjeta(5000m);
+    private Colectivo colectivo = new Colectivo("102");
+    private Boleto? ultimoBoleto = null;
+    private string lineaSeleccionada = "102";
+    private bool esInterurbano = false;
+    private decimal montoSeleccionado = 5000m;
+    private string mensajeError = "";
+    private string mensajeRecarga = "";
+    private List<string> lineas = new() { "102", "144", "215", "500" };
+    private List<decimal> montos = new() { 2000, 3000, 5000, 7000, 9000 };
+    private List<HistorialItem> historial = new();
+
+    private void SetTipo(string t)
+    {
+        tipo = t;
+        tarjeta = t switch
+        {
+            "medio" => new MedioBoleto(5000m),
+            "franquicia" => new FranquiciaCompleta(3000m),
+            _ => new Tarjeta(5000m)
+        };
+        colectivo = new Colectivo(lineaSeleccionada);
+        ultimoBoleto = null;
+        historial.Clear();
+        mensajeError = "";
+        mensajeRecarga = "";
+    }
+
+    private void Viajar()
+    {
+        mensajeError = "";
+        try
+        {
+            colectivo = new Colectivo(lineaSeleccionada);
+            bool esGratis = tarjeta is FranquiciaCompleta fc && fc.ViajesGratuitosRestantesHoy() > 0;
+            ultimoBoleto = colectivo.PagarCon(tarjeta, Tiempo.Ahora(), esInterurbano);
+            historial.Insert(0, new HistorialItem
+            {
+                Descripcion = $"Línea {lineaSeleccionada}",
+                Sub = ObtenerNombreTipo(),
+                Monto = esGratis ? 0 : -ultimoBoleto.TotalAbonado,
+                EsGratis = esGratis,
+                Fecha = DateTime.Now.ToString("dd/MM HH:mm")
+            });
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void Recargar()
+    {
+        mensajeRecarga = "";
+        decimal saldoAntes = tarjeta.ObtenerSaldo();
+        tarjeta.RecargarSaldo(montoSeleccionado);
+        decimal acreditado = tarjeta.ObtenerSaldo() - saldoAntes;
+
+        if (acreditado <= 0)
+        {
+            mensajeRecarga = "Saldo máximo alcanzado. No se pueden realizar más recargas.";
+            return;
+        }
+
+        mensajeRecarga = acreditado < montoSeleccionado
+            ? $"Se acreditaron ${acreditado:N0}. Máximo alcanzado."
+            : $"Se acreditaron ${acreditado:N0}";
+
+        historial.Insert(0, new HistorialItem
+        {
+            Descripcion = "Recarga",
+            Sub = $"${acreditado:N2} cargados",
+            Monto = acreditado,
+            EsRecarga = true,
+            Fecha = DateTime.Now.ToString("dd/MM HH:mm")
+        });
+    }
+
+    private void Reset() => SetTipo(tipo);
+
+    private decimal ObtenerTarifaActual()
+    {
+        if (esInterurbano) return 2500m;
+        if (tipo == "medio") return 600m;
+        int v = tarjeta.ObtenerViajesEsteMes();
+        if (v < 30) return 1200m;
+        if (v < 80) return 960m;
+        if (v == 80) return 900m;
+        return 1200m;
+    }
+
+    private string ObtenerBeneficio()
+    {
+        if (tipo == "franquicia" && tarjeta is FranquiciaCompleta fc)
+            return $"{fc.ViajesGratuitosRestantesHoy()} hoy";
+        if (tipo == "medio") return "50%";
+        int v = tarjeta.ObtenerViajesEsteMes();
+        if (v >= 30 && v < 80) return "20% off";
+        if (v == 80) return "25% off";
+        return "—";
+    }
+
+    private string ObtenerLabelBeneficio()
+    {
+        if (tipo == "franquicia") return "gratis hoy";
+        if (tipo == "medio") return "descuento";
+        return "descuento mes";
+    }
+
+    private string ObtenerNombreTipo() => tipo switch
+    {
+        "medio" => "Medio boleto",
+        "franquicia" => "Franquicia completa",
+        _ => "Normal"
+    };
+
+    private class HistorialItem
+    {
+        public string Descripcion { get; set; } = "";
+        public string Sub { get; set; } = "";
+        public decimal Monto { get; set; }
+        public bool EsRecarga { get; set; }
+        public bool EsGratis { get; set; }
+        public string Fecha { get; set; } = "";
+    }
+}
+
+<style>
+    body {
+        background-color: #f3f4f6;
+    }
+
+    /* ── Layout principal ── */
+    .sube-wrap {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 14px;
+        padding: 14px;
+        max-width: 960px;
+        margin: 0 auto;
+        font-family: system-ui, sans-serif;
+        min-height: calc(100vh - 28px);
+    }
+
+    /* ── Columna de tarjetas ── */
+    .sube-cards-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sube-card-visual {
+        border-radius: 14px;
+        padding: 16px 14px 12px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+        transition: transform .15s, border-color .15s, box-shadow .15s;
+        user-select: none;
+        min-height: 130px;
+    }
+
+        .sube-card-visual:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+        }
+
+        .sube-card-visual.card-active {
+            border-color: rgba(255,255,255,0.55);
+            transform: scale(1.03);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+        }
+
+    .card-normal {
+        background: linear-gradient(135deg, #1a237e 0%, #283593 60%, #1565c0 100%);
+    }
+
+    .card-medio {
+        background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 60%, #388e3c 100%);
+    }
+
+    .card-franquicia {
+        background: linear-gradient(135deg, #b71c1c 0%, #c62828 60%, #e53935 100%);
+    }
+
+    .card-chip {
+        width: 28px;
+        height: 22px;
+        border-radius: 4px;
+        background: linear-gradient(135deg, #ffd54f, #ffca28);
+        margin-bottom: 10px;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .card-wave {
+        position: absolute;
+        bottom: -10px;
+        right: -20px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.07);
+        pointer-events: none;
+    }
+
+    .card-wave2 {
+        position: absolute;
+        bottom: -25px;
+        right: -35px;
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+        pointer-events: none;
+    }
+
+    .card-saldo-pos {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        text-align: right;
+    }
+
+    .card-saldo-num {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .card-saldo-lbl {
+        font-size: 9px;
+        color: rgba(255,255,255,0.6);
+        letter-spacing: .5px;
+    }
+
+    .card-num {
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: rgba(255,255,255,0.8);
+        font-family: monospace;
+        margin-bottom: 6px;
+    }
+
+    .card-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .card-sub {
+        font-size: 10px;
+        color: rgba(255,255,255,0.65);
+        margin-top: 2px;
+    }
+
+    .card-activa-badge {
+        position: absolute;
+        bottom: 10px;
+        right: 12px;
+        font-size: 9px;
+        background: rgba(255,255,255,0.22);
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+        letter-spacing: .3px;
+    }
+
+    /* ── Columna principal ── */
+    .sube-main-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sube-stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .sube-stat {
+        background: white;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+
+    .sube-stat-num {
+        font-size: 20px;
+        font-weight: 600;
+        color: #111;
+    }
+
+    .sube-stat-lbl {
+        font-size: 10px;
+        color: #888;
+        margin-top: 2px;
+    }
+
+    .sube-content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        flex: 1;
+    }
+
+    .sube-actions-col,
+    .sube-info-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sube-panel {
+        background: white;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+
+    .sube-panel-hist {
+        flex: 1;
+    }
+
+    .sube-panel-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #888;
+        margin-bottom: 10px;
+    }
+
+    .sube-chip-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .sube-chip {
+        border: 1.5px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        background: white;
+        color: #111;
+        user-select: none;
+        transition: all .1s;
+    }
+
+        .sube-chip:hover {
+            background: #f5f5f5;
+        }
+
+    .chip-linea-sel {
+        background: #E6F1FB !important;
+        border-color: #185FA5 !important;
+        color: #0C447C !important;
+    }
+
+    .chip-monto-sel {
+        background: #E1F5EE !important;
+        border-color: #0F6E56 !important;
+        color: #085041 !important;
+    }
+
+    .sube-toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: #555;
+    }
+
+    .sube-btn-primary {
+        background: #1D9E75;
+        color: white;
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        transition: background .15s;
+        margin-top: 2px;
+    }
+
+        .sube-btn-primary:hover {
+            background: #0f6e56;
+        }
+
+        .sube-btn-primary:active {
+            transform: scale(0.98);
+        }
+
+    .sube-btn-recargar {
+        background: #E6F1FB;
+        color: #0C447C;
+        border: 1.5px solid #B5D4F4;
+        border-radius: 8px;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        flex: 1;
+        text-align: center;
+        transition: background .15s;
+    }
+
+        .sube-btn-recargar:hover {
+            background: #B5D4F4;
+        }
+
+    .sube-btn-reset {
+        background: #f5f5f5;
+        color: #666;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+        transition: background .15s;
+    }
+
+        .sube-btn-reset:hover {
+            background: #eee;
+        }
+
+    .sube-msg-warn {
+        background: #FAEEDA;
+        border: 1px solid #FAC775;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 11px;
+        color: #633806;
+        margin-top: 6px;
+    }
+
+    .sube-msg-ok {
+        background: #E1F5EE;
+        border: 1px solid #9FE1CB;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 11px;
+        color: #085041;
+        margin-top: 6px;
+    }
+
+    .sube-boleto {
+        border: 1.5px dashed #ccc;
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #fafafa;
+    }
+
+    .sube-boleto-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .sube-boleto-linea {
+        font-size: 17px;
+        font-weight: 600;
+        color: #111;
+    }
+
+    .sube-badge {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .sube-badge-green {
+        background: #E1F5EE;
+        color: #085041;
+    }
+
+    .sube-badge-amber {
+        background: #FAEEDA;
+        color: #633806;
+    }
+
+    .sube-brow {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        padding: 4px 0;
+        border-bottom: 1px solid #eee;
+        color: #111;
+    }
+
+        .sube-brow:last-child {
+            border-bottom: none;
+        }
+
+        .sube-brow span:first-child {
+            color: #888;
+        }
+
+    .sube-hist-scroll {
+        overflow-y: auto;
+        max-height: 180px;
+    }
+
+    .sube-hist-empty {
+        font-size: 11px;
+        color: #888;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .sube-hist-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 11px;
+    }
+
+        .sube-hist-item:last-child {
+            border-bottom: none;
+        }
+
+    .sube-hist-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .sube-hist-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .dot-viaje {
+        background: #1D9E75;
+    }
+
+    .dot-recarga {
+        background: #378ADD;
+    }
+
+    .dot-gratis {
+        background: #EF9F27;
+    }
+
+    .sube-hist-desc {
+        font-weight: 600;
+        color: #111;
+    }
+
+    .sube-hist-sub {
+        color: #888;
+        font-size: 10px;
+    }
+
+    .saldo-neg {
+        color: #c0392b !important;
+    }
+
+    .hist-pos {
+        color: #1D9E75;
+        font-weight: 600;
+    }
+
+    .hist-neg {
+        color: #c0392b;
+        font-weight: 600;
+    }
+</style>
