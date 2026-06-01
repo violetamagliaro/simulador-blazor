@@ -6,7 +6,7 @@ namespace TarjetaSube.Models.Sube
     public class MedioBoleto : Tarjeta
     {
         private static readonly decimal FACTOR_MEDIO = 0.5m;
-        private Tiempo tiempoUltimoViaje;
+        private Tiempo? tiempoUltimoViaje;
         private decimal _ultimoPago;
 
         public MedioBoleto(decimal saldoInicial) : base(saldoInicial)
