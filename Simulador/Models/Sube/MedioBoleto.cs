@@ -6,7 +6,10 @@ namespace TarjetaSube.Models.Sube
     public class MedioBoleto : Tarjeta
     {
         private static readonly decimal FACTOR_MEDIO = 0.5m;
+
+        // Puede no existir hasta que haya un viaje
         private Tiempo? tiempoUltimoViaje;
+
         private decimal _ultimoPago;
 
         public MedioBoleto(decimal saldoInicial) : base(saldoInicial)
@@ -16,9 +19,8 @@ namespace TarjetaSube.Models.Sube
 
         protected decimal ObtenerTarifaMedio()
         {
-            // Calcula el 50% de la tarifa que correspondería por viajes acumulados
-            // pero el medio boleto siempre es la mitad de la tarifa normal base
-            return TARIFA_NORMAL * FACTOR_MEDIO; // 600 pesos
+            // 50% de la tarifa normal base
+            return TARIFA_NORMAL * FACTOR_MEDIO;
         }
 
         public override bool TieneSaldoSuficiente()
@@ -37,14 +39,21 @@ namespace TarjetaSube.Models.Sube
             if (!TieneSaldoSuficiente())
                 throw new InvalidOperationException("Saldo insuficiente.");
 
-            _ultimoPago = ObtenerTarifaMedio(); // Siempre debita la tarifa de medio boleto
+            _ultimoPago = ObtenerTarifaMedio();
+
             saldo -= _ultimoPago;
             tiempoUltimoViaje = Tiempo.Ahora();
             viajesEsteMes++;
         }
 
-        public override decimal ObtenerUltimoPago() => _ultimoPago;
+        public override decimal ObtenerUltimoPago()
+        {
+            return _ultimoPago;
+        }
 
-        public Tiempo ObtenerTiempoUltimoViaje() => tiempoUltimoViaje;
+        public Tiempo? ObtenerTiempoUltimoViaje()
+        {
+            return tiempoUltimoViaje;
+        }
     }
 }
