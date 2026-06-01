@@ -808,4 +808,38 @@
         color: #c0392b;
         font-weight: 600;
     }
+
+    @@media (max-width: 768px) {
+
+        html, body {
+            overflow-y: auto;
+        }
+
+        .sube-wrap {
+            display: flex;
+            flex-direction: column;
+            min-height: auto;
+            height: auto;
+            overflow-y: auto;
+        }
+
+        .sube-main-col {
+            height: auto;
+        }
+
+        .sube-content-grid {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        }
+
+        .sube-panel-hist {
+            flex: unset;
+        }
+
+        .sube-hist-scroll {
+            max-height: none;
+            overflow: visible;
+        }
+    }
 </style>

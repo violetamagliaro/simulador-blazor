@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Simulador",
   "resources": {
-    "hash": "sha256-9wD1gfW8deGB1/1P/wai17MaPvE7BRIYNOBa13q3lvU=",
+    "hash": "sha256-8Qkit0IzukVc+UvAa7k997amduraz+xESXZT7+S3y3s=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-sn/g61GjVPhViOYQDkq1OMlk0eyS9r2Hi0qgU2o0HIU="
     },
@@ -209,10 +209,10 @@
       "mscorlib.wasm": "sha256-YI5F+NHcYCSuCGvvp5vyTL2orAoMlXo4ep5foTyMfeg=",
       "netstandard.wasm": "sha256-jVzOxH5q4FYYDM01Qwoa/2MjK7CwbDVo6rPFjrBorII=",
       "System.Private.CoreLib.wasm": "sha256-d+N5gZbidgB9OgmPuYn1T6BQWHjajGzz+AvKnZJ+zmA=",
-      "Simulador.wasm": "sha256-YSB/AeSsH5PbTcDFVwasGbGPk9ywIo55r536IPf907o="
+      "Simulador.wasm": "sha256-c0wP9GNCkdf42iEFwEcE0L+rxx9OhqRRHNWvE0fkKCg="
     },
     "pdb": {
-      "Simulador.pdb": "sha256-KJdx8jAzA/NZ9Rbo5AN6k5DKsKo8XRwstPIu9RX6ejY="
+      "Simulador.pdb": "sha256-tFAqGMvWNzY4i8gKM2KmBocpM09iqIgjITLR8vmRRhA="
     }
   },
   "cacheBootResources": true,

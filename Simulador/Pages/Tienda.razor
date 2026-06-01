@@ -38,7 +38,7 @@
 
         <div class="top-bar">
             <div class="top-title">
-                <i class="ti ti-building-store" aria-hidden="true"></i> MiniMarket Pro
+                <i class="ti ti-building-store" aria-hidden="true"></i> MiniMarket
             </div>
             <div class="top-caja">
                 <i class="ti ti-cash" aria-hidden="true"></i> Caja: $@tienda.DineroEnCaja.ToString("N0")
@@ -555,6 +555,42 @@
         display: flex;
         flex-direction: column;
         flex: 1;
+    }
+
+    @@media (max-width: 768px) {
+
+        html, body {
+            overflow-y: auto;
+        }
+
+        .tienda-wrap {
+            height: auto;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sala {
+            overflow-y: visible;
+            padding-bottom: 20px;
+        }
+
+        .bottom-bar {
+            position: static;
+        }
+
+        .estantes {
+            width: 95%;
+        }
+
+        .estante-productos {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .producto {
+            flex: 0 0 calc(50% - 10px);
+            min-width: 100px;
+        }
     }
 
 </style>

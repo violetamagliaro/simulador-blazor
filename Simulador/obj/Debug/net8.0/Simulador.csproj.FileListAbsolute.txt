@@ -1023,9 +1023,6 @@ C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\gly5zo
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\2rmdcazz8b-{0}-tptq2av103-tptq2av103.gz
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\i1sb1aqo8p-{0}-lfu7j35m59-lfu7j35m59.gz
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\3la6r6se5l-{0}-oyz0vx2fzb-oyz0vx2fzb.gz
-C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\ypys0ee0il-{0}-rtrjkqdrlt-rtrjkqdrlt.gz
-C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\vg164c7izb-{0}-8wyqont7u3-8wyqont7u3.gz
-C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\whs4flh82g-{0}-skxf051zi7-skxf051zi7.gz
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\staticwebassets.development.json
@@ -1037,3 +1034,7 @@ C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\Simulador.dll
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\refint\Simulador.dll
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\Simulador.pdb
 C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\ref\Simulador.dll
+C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\Simulador.sourcelink.json
+C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\ypys0ee0il-{0}-h3lr47tpfl-h3lr47tpfl.gz
+C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\vg164c7izb-{0}-ko8jyz9dsd-ko8jyz9dsd.gz
+C:\Users\PC\Desktop\Viole\Simulador\Simulador\obj\Debug\net8.0\compressed\whs4flh82g-{0}-4hswk9b6c3-4hswk9b6c3.gz
